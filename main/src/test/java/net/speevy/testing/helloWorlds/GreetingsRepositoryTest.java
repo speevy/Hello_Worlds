@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,15 @@ public class GreetingsRepositoryTest {
 
 	@Test
 	void testUpdateExisting() {
+		testUpdateExisting(repository::update);
+ 	}
+
+	@Test
+	void testSaveExisting() {
+		testUpdateExisting(repository::save);
+ 	}
+	
+	private void testUpdateExisting(Consumer<Greetings> updater) {
 		insertGreetings();
 
 		List<Greetings> allGreetings = repository.findAll();
@@ -47,7 +57,7 @@ public class GreetingsRepositoryTest {
 		
 		Greetings greetings1 = allGreetings.get(0);
 		greetings1.setMessage("Hola món!");
-		repository.save(greetings1);
+		updater.accept(greetings1);
 		
 		List<Greetings> result = repository.findAll();
 		
@@ -55,6 +65,22 @@ public class GreetingsRepositoryTest {
 		assertTrue(result.stream().anyMatch(g -> "Hi World!".equals(g.getMessage())));
 		assertFalse(result.stream().anyMatch(g -> "Hello World!".equals(g.getMessage())));
  	}
+
+	@Test
+	void testUpdateNotExisting() {
+		insertGreetings();
+
+		List<Greetings> allGreetings = repository.findAll();
+
+		assertFalse(allGreetings.isEmpty());
+		
+		Long maxId = allGreetings.stream().map(Greetings::getId).reduce(0L, Math::max);
+
+		Optional<Greetings> result = repository.update(new Greetings(maxId + 1L, "Test"));
+		
+		assertTrue(result.isEmpty());
+ 	}
+
 	
 	@Test
 	void testFindById() {

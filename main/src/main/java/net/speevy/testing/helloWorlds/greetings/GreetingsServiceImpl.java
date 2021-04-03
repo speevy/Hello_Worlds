@@ -22,9 +22,13 @@ public class GreetingsServiceImpl implements GreetingsService {
 	}
 
 	@Override
-	public Optional<Greetings> save(Greetings greetings) {
-		final Greetings saved = repository.save(greetings);
-		return Optional.ofNullable(saved);
+	public Greetings save(Greetings greetings) {
+		return repository.save(greetings);
+	}
+
+	@Override
+	public Optional<Greetings> update(Greetings greetings) {
+		return repository.update(greetings);
 	}
 
 }

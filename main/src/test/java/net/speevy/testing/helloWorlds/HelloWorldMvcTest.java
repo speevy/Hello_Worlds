@@ -87,7 +87,7 @@ public class HelloWorldMvcTest {
 			.andExpect(status().isNotFound());
 		
 		ArgumentCaptor<Greetings> argumentCaptor = ArgumentCaptor.forClass(Greetings.class);
-		verify(service, times (3)).save(argumentCaptor.capture());
+		verify(service, times (3)).update(argumentCaptor.capture());
 		List<Greetings> captured = argumentCaptor.getAllValues();
 
 		assertEquals(3, captured.size());
@@ -105,7 +105,7 @@ public class HelloWorldMvcTest {
 	}
 
 	private void mockServiceUpdate(final long id) {
-		when(service.save(argThat(generateGreetingsMatcherById(id))))
+		when(service.update(argThat(generateGreetingsMatcherById(id))))
 		.thenAnswer( i -> Optional.of ((Greetings)(i.getArguments()[0])));
 	}
 
@@ -115,7 +115,7 @@ public class HelloWorldMvcTest {
 	}
 
 	private void mockServiceUpdateNotFound(final long id) {
-		when(service.save(argThat(generateGreetingsMatcherById(id))))
+		when(service.update(argThat(generateGreetingsMatcherById(id))))
 		.thenReturn( Optional.empty());
 	}
 

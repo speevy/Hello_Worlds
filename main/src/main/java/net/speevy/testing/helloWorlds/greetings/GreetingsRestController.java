@@ -42,9 +42,9 @@ public class GreetingsRestController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody GreetingsDTO dto) {
 		
-		Greetings toSave = mapper.toVo(id, dto);
+		Greetings toUpdate = mapper.toVo(id, dto);
 		
-		if (service.save(toSave).isPresent()) {
+		if (service.update(toUpdate).isPresent()) {
 			return new ResponseEntity<Void>(OK);
 		} else {
 			return new ResponseEntity<Void>(NOT_FOUND);
