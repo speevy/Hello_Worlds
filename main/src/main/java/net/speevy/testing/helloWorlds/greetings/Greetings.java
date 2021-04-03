@@ -11,5 +11,5 @@ public class Greetings {
 
 	@Id
 	private Long id;
-	private String hello;
+	private String message;
 }

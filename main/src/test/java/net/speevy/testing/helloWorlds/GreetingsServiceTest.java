@@ -39,8 +39,8 @@ public class GreetingsServiceTest {
 		assertTrue(greeting2.isPresent());
 		assertTrue(greeting3.isEmpty());
 
-		assertEquals("Hello World", greeting1.get().getHello());
-		assertEquals("Hi World", greeting2.get().getHello());
+		assertEquals("Hello World", greeting1.get().getMessage());
+		assertEquals("Hi World", greeting2.get().getMessage());
 	}
 
 	private GreetingsService instanceService() {

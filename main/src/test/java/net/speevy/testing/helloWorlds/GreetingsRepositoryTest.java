@@ -27,14 +27,14 @@ public class GreetingsRepositoryTest {
 		assertThat(greetings1.getId()).isNotNull();
 		assertThat(greetings2.getId()).isNotNull();
 		
-		greetings1.setHello("Hola món!");
+		greetings1.setMessage("Hola món!");
 		
 		repository.save(greetings1);
 		
 		List<Greetings> result = repository.findAll();
 		
-		assertTrue(result.stream().anyMatch(g -> "Hola món!".equals(g.getHello())));
-		assertTrue(result.stream().anyMatch(g -> "Hi World!".equals(g.getHello())));
-		assertFalse(result.stream().anyMatch(g -> "Hello World!".equals(g.getHello())));
+		assertTrue(result.stream().anyMatch(g -> "Hola món!".equals(g.getMessage())));
+		assertTrue(result.stream().anyMatch(g -> "Hi World!".equals(g.getMessage())));
+		assertFalse(result.stream().anyMatch(g -> "Hello World!".equals(g.getMessage())));
  	}
 }

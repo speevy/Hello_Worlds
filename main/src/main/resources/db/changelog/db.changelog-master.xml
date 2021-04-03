@@ -7,5 +7,6 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
 http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd">
 
 <include file="db.changelog-2021_03_31_Greetings.xml" relativeToChangelogFile="true" />
+<include file="db.changelog-2021_04_03_Greetings_RenameHelloToMessage.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
