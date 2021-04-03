@@ -2,6 +2,7 @@ package net.speevy.testing.helloWorlds;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -9,10 +10,11 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.context.annotation.ComponentScan.Filter;
 
 import net.speevy.testing.helloWorlds.greetings.*;
 
-@DataJdbcTest
+@DataJdbcTest(includeFilters = {@Filter(type = ASSIGNABLE_TYPE, classes = {GreetingsRepository.class})})
 public class GreetingsRepositoryTest {
 
 	@Autowired GreetingsRepository repository;
@@ -103,4 +105,18 @@ public class GreetingsRepositoryTest {
 		assertEquals (greetings2, result2.get());
  	}
 
+	@Test
+	void testFindByQuery() {
+		Greetings greetings1 = new Greetings(null, "Hello World!");
+		Greetings greetings2 = new Greetings(null, "Hi World!");
+		
+		repository.save(greetings1);
+		repository.save(greetings2);
+		
+		List<Greetings> results = repository.findByIdLessThan(greetings2.getId());
+		
+		assertEquals(1, results.size());
+		assertEquals (greetings1, results.get(0));
+ 	}
+	
 }
