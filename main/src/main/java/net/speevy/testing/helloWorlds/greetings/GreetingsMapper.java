@@ -11,4 +11,7 @@ public interface GreetingsMapper {
 	@Mapping(target = "id", ignore = true)
 	@InheritInverseConfiguration
 	Greetings toVo(GreetingsDTO dto);
+
+	@Mapping(source = "dto.hello", target = "message")
+	Greetings toVo(Long id, GreetingsDTO dto);
 }

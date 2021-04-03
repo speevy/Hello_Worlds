@@ -4,7 +4,7 @@ import java.util.*;
 
 public interface GreetingsService {
 
-	void save(Greetings greetings);
+	Optional<Greetings> save(Greetings greetings);
 
 	Collection<Greetings> findAll();
 

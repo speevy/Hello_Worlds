@@ -1,10 +1,11 @@
 package net.speevy.testing.helloWorlds.greetings;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -38,4 +39,15 @@ public class GreetingsRestController {
 				.orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
 	}
 
+	@PutMapping("/{id}")
+	public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody GreetingsDTO dto) {
+		
+		Greetings toSave = mapper.toVo(id, dto);
+		
+		if (service.save(toSave).isPresent()) {
+			return new ResponseEntity<Void>(OK);
+		} else {
+			return new ResponseEntity<Void>(NOT_FOUND);
+		}
+	}
 }

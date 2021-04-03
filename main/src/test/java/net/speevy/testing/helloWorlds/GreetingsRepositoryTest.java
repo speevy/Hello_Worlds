@@ -3,7 +3,7 @@ package net.speevy.testing.helloWorlds;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
+import java.util.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,16 @@ public class GreetingsRepositoryTest {
 	@Autowired GreetingsRepository repository;
 	
 	@Test
-	void testGreetingsRepository() {
+	void testFindAll() {
+		insertGreetings();
+		
+		List<Greetings> result = repository.findAll();
+		
+		assertTrue(result.stream().anyMatch(g -> "Hello World!".equals(g.getMessage())));
+		assertTrue(result.stream().anyMatch(g -> "Hi World!".equals(g.getMessage())));
+ 	}
+
+	private void insertGreetings() {
 		Greetings greetings1 = new Greetings(null, "Hello World!");
 		Greetings greetings2 = new Greetings(null, "Hi World!");
 		
@@ -26,9 +35,18 @@ public class GreetingsRepositoryTest {
 		
 		assertThat(greetings1.getId()).isNotNull();
 		assertThat(greetings2.getId()).isNotNull();
+	}
+
+	@Test
+	void testUpdateExisting() {
+		insertGreetings();
+
+		List<Greetings> allGreetings = repository.findAll();
+
+		assertFalse(allGreetings.isEmpty());
 		
+		Greetings greetings1 = allGreetings.get(0);
 		greetings1.setMessage("Hola món!");
-		
 		repository.save(greetings1);
 		
 		List<Greetings> result = repository.findAll();
@@ -37,4 +55,26 @@ public class GreetingsRepositoryTest {
 		assertTrue(result.stream().anyMatch(g -> "Hi World!".equals(g.getMessage())));
 		assertFalse(result.stream().anyMatch(g -> "Hello World!".equals(g.getMessage())));
  	}
+	
+	@Test
+	void testFindById() {
+		Greetings greetings1 = new Greetings(null, "Hello World!");
+		Greetings greetings2 = new Greetings(null, "Hi World!");
+		
+		repository.save(greetings1);
+		repository.save(greetings2);
+		
+		
+		Optional<Greetings> result1 = repository.findById(greetings1.getId());
+		Optional<Greetings> result2 = repository.findById(greetings2.getId());
+		Optional<Greetings> result3 = repository.findById(Math.max(greetings1.getId(), greetings2.getId()) + 1L);
+		
+		assertTrue (result1.isPresent());
+		assertTrue (result2.isPresent());
+		assertTrue (result3.isEmpty());
+		
+		assertEquals (greetings1, result1.get());
+		assertEquals (greetings2, result2.get());
+ 	}
+
 }
