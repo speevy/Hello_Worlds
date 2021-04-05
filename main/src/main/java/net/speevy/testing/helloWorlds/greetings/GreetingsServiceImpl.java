@@ -12,22 +12,22 @@ public class GreetingsServiceImpl implements GreetingsService {
 	private final GreetingsRepository repository;
 
 	@Override
-	public Optional<GreetingsEntity> getGreeting(Long id) {
+	public Optional<Greetings> getGreeting(Long id) {
 		return repository.findById(id);
 	}
 	
 	@Override
-	public Collection<GreetingsEntity> findAll() {
+	public Collection<Greetings> findAll() {
 		return repository.findAll();
 	}
 
 	@Override
-	public GreetingsEntity save(GreetingsEntity greetings) {
+	public Greetings save(Greetings greetings) {
 		return repository.save(greetings);
 	}
 
 	@Override
-	public Optional<GreetingsEntity> update(GreetingsEntity greetings) {
+	public Optional<Greetings> update(Greetings greetings) {
 		return repository.update(greetings);
 	}
 

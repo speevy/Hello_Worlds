@@ -9,12 +9,12 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface GreetingsSpringDataMapper {
-	Greetings toRepo(GreetingsEntity vo);
+	GreetingsDB toRepo(Greetings vo);
 	
 	@InheritInverseConfiguration
-	GreetingsEntity toEntity(Greetings repo);
+	Greetings toEntity(GreetingsDB repo);
 
-	default List<GreetingsEntity> toEntityList (Iterable<Greetings> repos) {
+	default List<Greetings> toEntityList (Iterable<GreetingsDB> repos) {
 		return StreamSupport.stream(repos.spliterator(), false)
 				.map(this::toEntity)
 				.collect(toList());

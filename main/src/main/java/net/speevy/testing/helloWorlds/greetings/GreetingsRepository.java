@@ -4,11 +4,11 @@ import java.util.List;
 
 import net.speevy.utils.IndependentCrudRepository;
 
-public interface GreetingsRepository extends IndependentCrudRepository<GreetingsEntity, Long> {
+public interface GreetingsRepository extends IndependentCrudRepository<Greetings, Long> {
 	
-	List<GreetingsEntity> findAll();
+	List<Greetings> findAll();
 
-	List<GreetingsEntity> findByIdLessThan(Long maxId);
+	List<Greetings> findByIdLessThan(Long maxId);
 
 
 }

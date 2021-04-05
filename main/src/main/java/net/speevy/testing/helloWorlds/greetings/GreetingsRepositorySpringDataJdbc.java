@@ -8,5 +8,5 @@ public interface GreetingsRepositorySpringDataJdbc extends GreetingsRepositorySp
 
 	@Override
 	@Query("select * from greetings where id < :maxId")
-	List<Greetings> findByIdLessThan(Long maxId);
+	List<GreetingsDB> findByIdLessThan(Long maxId);
 }

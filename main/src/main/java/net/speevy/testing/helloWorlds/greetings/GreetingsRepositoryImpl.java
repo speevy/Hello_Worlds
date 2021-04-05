@@ -14,15 +14,15 @@ public class GreetingsRepositoryImpl implements GreetingsRepository {
 	private final GreetingsSpringDataMapper mapper;
 
 	@Override
-	public Long extractId(GreetingsEntity entity) {
+	public Long extractId(Greetings entity) {
 		return entity.getId();
 	}
 
 	@Override
-	public GreetingsEntity save(GreetingsEntity entity) {
+	public Greetings save(Greetings entity) {
 		assert(entity != null);
-		final Greetings repoEntity = mapper.toRepo(entity);
-		final Greetings saved = repo.save(repoEntity);
+		final GreetingsDB repoEntity = mapper.toRepo(entity);
+		final GreetingsDB saved = repo.save(repoEntity);
 
 		if (entity.getId() == null) {
 			entity.setId(saved.getId());
@@ -32,7 +32,7 @@ public class GreetingsRepositoryImpl implements GreetingsRepository {
 	}
 
 	@Override
-	public Optional<GreetingsEntity> findById(Long id) {
+	public Optional<Greetings> findById(Long id) {
 		return repo.findById(id).map(mapper::toEntity);
 	}
 
@@ -52,12 +52,12 @@ public class GreetingsRepositoryImpl implements GreetingsRepository {
 	}
 
 	@Override
-	public List<GreetingsEntity> findAll() {
+	public List<Greetings> findAll() {
 		return mapper.toEntityList(repo.findAll());
 	}
 
 	@Override
-	public List<GreetingsEntity> findByIdLessThan(Long maxId) {
+	public List<Greetings> findByIdLessThan(Long maxId) {
 		return mapper.toEntityList(repo.findByIdLessThan(maxId));
 	}
 	

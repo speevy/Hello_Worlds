@@ -39,7 +39,7 @@ public class GreetingsRestController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody GreetingsDTO dto) {
 		
-		GreetingsEntity toUpdate = mapper.toVo(id, dto);
+		Greetings toUpdate = mapper.toVo(id, dto);
 		
 		if (service.update(toUpdate).isPresent()) {
 			return new ResponseEntity<>(OK);
@@ -50,7 +50,7 @@ public class GreetingsRestController {
 
 	@PostMapping
 	public ResponseEntity<GreetingsDTO> create(@RequestBody GreetingsDTO dto) {
-		GreetingsEntity saved = service.save(mapper.toVo(dto));
+		Greetings saved = service.save(mapper.toVo(dto));
 		return new ResponseEntity<>(mapper.toDto(saved), OK);
 	}
 

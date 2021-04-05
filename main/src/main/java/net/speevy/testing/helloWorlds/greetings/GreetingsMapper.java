@@ -6,13 +6,13 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface GreetingsMapper {
 	@Mapping(source = "message", target = "hello")
-	GreetingsDTO toDto(GreetingsEntity vo);
+	GreetingsDTO toDto(Greetings vo);
 	
 	@Mapping(target = "id", ignore = true)
 	@InheritInverseConfiguration
-	GreetingsEntity toVo(GreetingsDTO dto);
+	Greetings toVo(GreetingsDTO dto);
 
 	@Mapping(source = "dto.hello", target = "message")
 	@Mapping(source = "id", target = "id")
-	GreetingsEntity toVo(Long id, GreetingsDTO dto);
+	Greetings toVo(Long id, GreetingsDTO dto);
 }
