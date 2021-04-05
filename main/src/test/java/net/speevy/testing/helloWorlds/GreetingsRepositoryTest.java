@@ -83,6 +83,14 @@ public class GreetingsRepositoryTest {
 
 	
 	@Test
+	void testUpdateNullId() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			repository.update(new Greetings(null, "Test")); 
+		});
+ 	}
+
+	
+	@Test
 	void testFindById() {
 		Greetings greetings1 = new Greetings(null, "Hello World!");
 		Greetings greetings2 = new Greetings(null, "Hi World!");

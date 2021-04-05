@@ -24,7 +24,6 @@ public class GreetingsRestController {
 	@GetMapping()
 	@ResponseBody
 	public Collection<GreetingsDTO> helloWorld() {
-		log.debug(()-> "Into HelloWorld");
 		return service.findAll().stream()
 				.map(mapper::toDto)
 				.collect(Collectors.toList());
@@ -50,4 +49,11 @@ public class GreetingsRestController {
 			return new ResponseEntity<Void>(NOT_FOUND);
 		}
 	}
+
+	@PostMapping
+	public ResponseEntity<GreetingsDTO> create(@RequestBody GreetingsDTO dto) {
+		Greetings saved = service.save(mapper.toVo(dto));
+		return new ResponseEntity<>(mapper.toDto(saved), OK);
+	}
+
 }

@@ -13,5 +13,6 @@ public interface GreetingsMapper {
 	Greetings toVo(GreetingsDTO dto);
 
 	@Mapping(source = "dto.hello", target = "message")
+	@Mapping(source = "id", target = "id")
 	Greetings toVo(Long id, GreetingsDTO dto);
 }

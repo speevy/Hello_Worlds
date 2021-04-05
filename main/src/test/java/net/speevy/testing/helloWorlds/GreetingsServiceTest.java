@@ -53,11 +53,11 @@ public class GreetingsServiceTest {
 	@Test
 	public void testGreetingsServiceUpdate() {
 		GreetingsService service = instanceService();
-		final Greetings greetings = new Greetings(null, "Greetings!");
-		service.save(greetings);
+		final Greetings greetings = new Greetings(1L, "Greetings!");
+		service.update(greetings);
 		
 		ArgumentCaptor<Greetings> argumentCaptor = ArgumentCaptor.forClass(Greetings.class);
-		verify(repository).save(argumentCaptor.capture());
+		verify(repository).update(argumentCaptor.capture());
 		Greetings result = argumentCaptor.getValue();
 		
 		assertEquals(greetings, result);
@@ -82,6 +82,20 @@ public class GreetingsServiceTest {
 		assertTrue(result.contains(greetings1));
 		assertTrue(result.contains(greetings2));
 		assertEquals(2, result.size());
+	}
+
+	@Test
+	public void testGreetingsServiceSave() {
+		GreetingsService service = instanceService();
+		final Greetings greetings = new Greetings(null, "Greetings!");
+		service.save(greetings);
+		
+		ArgumentCaptor<Greetings> argumentCaptor = ArgumentCaptor.forClass(Greetings.class);
+		verify(repository).save(argumentCaptor.capture());
+		Greetings result = argumentCaptor.getValue();
+		
+		assertEquals(greetings, result);
+
 	}
 
 }
