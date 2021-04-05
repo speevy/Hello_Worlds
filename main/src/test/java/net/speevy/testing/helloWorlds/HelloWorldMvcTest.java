@@ -1,14 +1,16 @@
 package net.speevy.testing.helloWorlds;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.function.Function;
 
 import org.json.*;
 import org.junit.jupiter.api.Test;
@@ -19,7 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.*;
 
 import net.speevy.testing.helloWorlds.greetings.*;
 
@@ -35,7 +37,7 @@ public class HelloWorldMvcTest {
 	private GreetingsService service;
 
 	@Test
-	public void greetingShouldReturnMessageFromService() throws Exception {
+	public void greetingsFindAll() throws Exception {
 		final List<Greetings> result = List.of(
 				new Greetings(1L, "Hello World"),
 				new Greetings(2L, "Hi World")
@@ -45,7 +47,7 @@ public class HelloWorldMvcTest {
 		
 		this.mockMvc.perform(get("/api/test"))
 				.andExpect(status().isOk())
-				.andExpect(content().json("[{'hello':'Hello World'}, {'hello':'Hi World'}]"));
+				.andExpect(content().json("[{'id':1,'hello':'Hello World'}, {'id':2,'hello':'Hi World'}]"));
 	}
 
 	@Test
@@ -97,9 +99,13 @@ public class HelloWorldMvcTest {
 	}
 
 	private MockHttpServletRequestBuilder putJson(String uri, String message) throws JSONException {
+		return sendJson(MockMvcRequestBuilders::put, uri, message);
+	}
+
+	private MockHttpServletRequestBuilder sendJson(Function<String, MockHttpServletRequestBuilder> method,  String uri, String message) throws JSONException {
 		JSONObject content = new JSONObject();
 		content.put("hello", message);
-		return put(uri)
+		return method.apply(uri)
 				.contentType(APPLICATION_JSON_UTF8)
 		        .content(content.toString());
 	}
@@ -117,6 +123,28 @@ public class HelloWorldMvcTest {
 	private void mockServiceUpdateNotFound(final long id) {
 		when(service.update(argThat(generateGreetingsMatcherById(id))))
 		.thenReturn( Optional.empty());
+	}
+
+	@Test
+	public void greetingsCreate() throws Exception {
+
+		when(service.save(any()))
+		.thenAnswer(i -> {
+			final Greetings greetings = (Greetings)(i.getArguments()[0]);
+
+			assertNull(greetings.getId());
+			
+			greetings.setId(1L);
+			return greetings;
+		});
+
+		mockMvc.perform(postJson("/api/test", "Hello Mars!"))
+			.andExpect(status().isOk())
+			.andExpect(content().json("{'id':1,'hello':'Hello Mars!'}"));
+	}
+
+	private MockHttpServletRequestBuilder postJson(String uri, String message) throws JSONException {
+		return sendJson(MockMvcRequestBuilders::post, uri, message);
 	}
 
 }
