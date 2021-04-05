@@ -4,12 +4,12 @@ import java.util.*;
 
 public interface GreetingsService {
 
-	Greetings save(Greetings greetings);
+	GreetingsEntity save(GreetingsEntity greetings);
 
-	Collection<Greetings> findAll();
+	Collection<GreetingsEntity> findAll();
 
-	Optional<Greetings> getGreeting(Long id);
+	Optional<GreetingsEntity> getGreeting(Long id);
 
-	Optional<Greetings> update(Greetings greetings);
+	Optional<GreetingsEntity> update(GreetingsEntity greetings);
 
 }

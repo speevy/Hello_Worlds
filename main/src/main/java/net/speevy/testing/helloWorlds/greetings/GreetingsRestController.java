@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
 @RequestMapping("/api/test")
 public class GreetingsRestController {
 
@@ -41,18 +39,18 @@ public class GreetingsRestController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody GreetingsDTO dto) {
 		
-		Greetings toUpdate = mapper.toVo(id, dto);
+		GreetingsEntity toUpdate = mapper.toVo(id, dto);
 		
 		if (service.update(toUpdate).isPresent()) {
-			return new ResponseEntity<Void>(OK);
+			return new ResponseEntity<>(OK);
 		} else {
-			return new ResponseEntity<Void>(NOT_FOUND);
+			return new ResponseEntity<>(NOT_FOUND);
 		}
 	}
 
 	@PostMapping
 	public ResponseEntity<GreetingsDTO> create(@RequestBody GreetingsDTO dto) {
-		Greetings saved = service.save(mapper.toVo(dto));
+		GreetingsEntity saved = service.save(mapper.toVo(dto));
 		return new ResponseEntity<>(mapper.toDto(saved), OK);
 	}
 

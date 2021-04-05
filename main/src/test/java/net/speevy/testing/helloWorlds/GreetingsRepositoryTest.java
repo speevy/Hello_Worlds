@@ -14,7 +14,10 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 
 import net.speevy.testing.helloWorlds.greetings.*;
 
-@DataJdbcTest(includeFilters = {@Filter(type = ASSIGNABLE_TYPE, classes = {GreetingsRepository.class})})
+@DataJdbcTest(includeFilters = {@Filter(type = ASSIGNABLE_TYPE, classes = {
+		GreetingsRepository.class, 
+		GreetingsSpringDataMapper.class
+	})})
 public class GreetingsRepositoryTest {
 
 	@Autowired GreetingsRepository repository;
@@ -23,21 +26,24 @@ public class GreetingsRepositoryTest {
 	void testFindAll() {
 		insertGreetings();
 		
-		List<Greetings> result = repository.findAll();
+		List<GreetingsEntity> result = repository.findAll();
 		
 		assertTrue(result.stream().anyMatch(g -> "Hello World!".equals(g.getMessage())));
 		assertTrue(result.stream().anyMatch(g -> "Hi World!".equals(g.getMessage())));
  	}
 
 	private void insertGreetings() {
-		Greetings greetings1 = new Greetings(null, "Hello World!");
-		Greetings greetings2 = new Greetings(null, "Hi World!");
+		GreetingsEntity greetings1 = new GreetingsEntity(null, "Hello World!");
+		GreetingsEntity greetings2 = new GreetingsEntity(null, "Hi World!");
 		
-		repository.save(greetings1);
-		repository.save(greetings2);
+		GreetingsEntity saved1 = repository.save(greetings1);
+		GreetingsEntity saved2 = repository.save(greetings2);
 		
 		assertThat(greetings1.getId()).isNotNull();
 		assertThat(greetings2.getId()).isNotNull();
+		assertThat(saved1.getId()).isNotNull();
+		assertThat(saved2.getId()).isNotNull();
+
 	}
 
 	@Test
@@ -50,18 +56,18 @@ public class GreetingsRepositoryTest {
 		testUpdateExisting(repository::save);
  	}
 	
-	private void testUpdateExisting(Consumer<Greetings> updater) {
+	private void testUpdateExisting(Consumer<GreetingsEntity> updater) {
 		insertGreetings();
 
-		List<Greetings> allGreetings = repository.findAll();
+		List<GreetingsEntity> allGreetings = repository.findAll();
 
 		assertFalse(allGreetings.isEmpty());
 		
-		Greetings greetings1 = allGreetings.get(0);
+		GreetingsEntity greetings1 = allGreetings.get(0);
 		greetings1.setMessage("Hola món!");
 		updater.accept(greetings1);
 		
-		List<Greetings> result = repository.findAll();
+		List<GreetingsEntity> result = repository.findAll();
 		
 		assertTrue(result.stream().anyMatch(g -> "Hola món!".equals(g.getMessage())));
 		assertTrue(result.stream().anyMatch(g -> "Hi World!".equals(g.getMessage())));
@@ -72,13 +78,13 @@ public class GreetingsRepositoryTest {
 	void testUpdateNotExisting() {
 		insertGreetings();
 
-		List<Greetings> allGreetings = repository.findAll();
+		List<GreetingsEntity> allGreetings = repository.findAll();
 
 		assertFalse(allGreetings.isEmpty());
 		
-		Long maxId = allGreetings.stream().map(Greetings::getId).reduce(0L, Math::max);
+		Long maxId = allGreetings.stream().map(GreetingsEntity::getId).reduce(0L, Math::max);
 
-		Optional<Greetings> result = repository.update(new Greetings(maxId + 1L, "Test"));
+		Optional<GreetingsEntity> result = repository.update(new GreetingsEntity(maxId + 1L, "Test"));
 		
 		assertTrue(result.isEmpty());
  	}
@@ -87,23 +93,23 @@ public class GreetingsRepositoryTest {
 	@Test
 	void testUpdateNullId() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			repository.update(new Greetings(null, "Test")); 
+			repository.update(new GreetingsEntity(null, "Test")); 
 		});
  	}
 
 	
 	@Test
 	void testFindById() {
-		Greetings greetings1 = new Greetings(null, "Hello World!");
-		Greetings greetings2 = new Greetings(null, "Hi World!");
+		GreetingsEntity greetings1 = new GreetingsEntity(null, "Hello World!");
+		GreetingsEntity greetings2 = new GreetingsEntity(null, "Hi World!");
 		
 		repository.save(greetings1);
 		repository.save(greetings2);
 		
 		
-		Optional<Greetings> result1 = repository.findById(greetings1.getId());
-		Optional<Greetings> result2 = repository.findById(greetings2.getId());
-		Optional<Greetings> result3 = repository.findById(Math.max(greetings1.getId(), greetings2.getId()) + 1L);
+		Optional<GreetingsEntity> result1 = repository.findById(greetings1.getId());
+		Optional<GreetingsEntity> result2 = repository.findById(greetings2.getId());
+		Optional<GreetingsEntity> result3 = repository.findById(Math.max(greetings1.getId(), greetings2.getId()) + 1L);
 		
 		assertTrue (result1.isPresent());
 		assertTrue (result2.isPresent());
@@ -115,13 +121,13 @@ public class GreetingsRepositoryTest {
 
 	@Test
 	void testFindByQuery() {
-		Greetings greetings1 = new Greetings(null, "Hello World!");
-		Greetings greetings2 = new Greetings(null, "Hi World!");
+		GreetingsEntity greetings1 = new GreetingsEntity(null, "Hello World!");
+		GreetingsEntity greetings2 = new GreetingsEntity(null, "Hi World!");
 		
 		repository.save(greetings1);
 		repository.save(greetings2);
 		
-		List<Greetings> results = repository.findByIdLessThan(greetings2.getId());
+		List<GreetingsEntity> results = repository.findByIdLessThan(greetings2.getId());
 		
 		assertEquals(1, results.size());
 		assertEquals (greetings1, results.get(0));

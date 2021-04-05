@@ -21,19 +21,19 @@ public class GreetingsServiceTest {
 	@Test
 	public void testGreetingsServiceGet() {
 		when(repository.findById(1L))
-		.thenReturn(Optional.of(new Greetings(1L, "Hello World")));
+		.thenReturn(Optional.of(new GreetingsEntity(1L, "Hello World")));
 
 		when(repository.findById(2L))
-		.thenReturn(Optional.of(new Greetings(2L, "Hi World")));
+		.thenReturn(Optional.of(new GreetingsEntity(2L, "Hi World")));
 		
 		when(repository.findById(3L))
 		.thenReturn(Optional.empty());
 
 		GreetingsService service = instanceService();
 		
-		final Optional<Greetings> greeting1 = service.getGreeting(1L);
-		final Optional<Greetings> greeting2 = service.getGreeting(2L);
-		final Optional<Greetings> greeting3 = service.getGreeting(3L);
+		final Optional<GreetingsEntity> greeting1 = service.getGreeting(1L);
+		final Optional<GreetingsEntity> greeting2 = service.getGreeting(2L);
+		final Optional<GreetingsEntity> greeting3 = service.getGreeting(3L);
 		
 		assertTrue(greeting1.isPresent());
 		assertTrue(greeting2.isPresent());
@@ -53,12 +53,12 @@ public class GreetingsServiceTest {
 	@Test
 	public void testGreetingsServiceUpdate() {
 		GreetingsService service = instanceService();
-		final Greetings greetings = new Greetings(1L, "Greetings!");
+		final GreetingsEntity greetings = new GreetingsEntity(1L, "Greetings!");
 		service.update(greetings);
 		
-		ArgumentCaptor<Greetings> argumentCaptor = ArgumentCaptor.forClass(Greetings.class);
+		ArgumentCaptor<GreetingsEntity> argumentCaptor = ArgumentCaptor.forClass(GreetingsEntity.class);
 		verify(repository).update(argumentCaptor.capture());
-		Greetings result = argumentCaptor.getValue();
+		GreetingsEntity result = argumentCaptor.getValue();
 		
 		assertEquals(greetings, result);
 
@@ -66,8 +66,8 @@ public class GreetingsServiceTest {
 
 	@Test
 	public void testGreetingsServiceAll() {
-		final Greetings greetings1 = new Greetings(1L, "Hello World");
-		final Greetings greetings2 = new Greetings(2L, "Hi World");
+		final GreetingsEntity greetings1 = new GreetingsEntity(1L, "Hello World");
+		final GreetingsEntity greetings2 = new GreetingsEntity(2L, "Hi World");
 		
 		when(repository.findAll())
 		.thenReturn(List.of(
@@ -77,7 +77,7 @@ public class GreetingsServiceTest {
 
 		GreetingsService service = instanceService();
 
-		Collection<Greetings> result = service.findAll();
+		Collection<GreetingsEntity> result = service.findAll();
 		
 		assertTrue(result.contains(greetings1));
 		assertTrue(result.contains(greetings2));
@@ -87,12 +87,12 @@ public class GreetingsServiceTest {
 	@Test
 	public void testGreetingsServiceSave() {
 		GreetingsService service = instanceService();
-		final Greetings greetings = new Greetings(null, "Greetings!");
+		final GreetingsEntity greetings = new GreetingsEntity(null, "Greetings!");
 		service.save(greetings);
 		
-		ArgumentCaptor<Greetings> argumentCaptor = ArgumentCaptor.forClass(Greetings.class);
+		ArgumentCaptor<GreetingsEntity> argumentCaptor = ArgumentCaptor.forClass(GreetingsEntity.class);
 		verify(repository).save(argumentCaptor.capture());
-		Greetings result = argumentCaptor.getValue();
+		GreetingsEntity result = argumentCaptor.getValue();
 		
 		assertEquals(greetings, result);
 

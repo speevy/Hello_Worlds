@@ -38,9 +38,9 @@ public class HelloWorldMvcTest {
 
 	@Test
 	public void greetingsFindAll() throws Exception {
-		final List<Greetings> result = List.of(
-				new Greetings(1L, "Hello World"),
-				new Greetings(2L, "Hi World")
+		final List<GreetingsEntity> result = List.of(
+				new GreetingsEntity(1L, "Hello World"),
+				new GreetingsEntity(2L, "Hi World")
 				);
 		
 		when(service.findAll()).thenReturn(result);
@@ -52,8 +52,8 @@ public class HelloWorldMvcTest {
 
 	@Test
 	public void greetingShouldReturnMessageFromServiceWithParam() throws Exception {
-		when(service.getGreeting(1L)).thenReturn(Optional.of(new Greetings(1L, "Hello, Mock")));
-		when(service.getGreeting(2L)).thenReturn(Optional.of(new Greetings(2L, "Hi, Mock")));
+		when(service.getGreeting(1L)).thenReturn(Optional.of(new GreetingsEntity(1L, "Hello, Mock")));
+		when(service.getGreeting(2L)).thenReturn(Optional.of(new GreetingsEntity(2L, "Hi, Mock")));
 		when(service.getGreeting(3L)).thenReturn(Optional.empty());
 
 		mockMvc.perform(get("/api/test/1"))
@@ -76,7 +76,7 @@ public class HelloWorldMvcTest {
 		mockServiceUpdate(2L);
 		mockServiceUpdateNotFound(3L);
 		
-		when(service.getGreeting(2L)).thenReturn(Optional.of(new Greetings(2L, "Hi, Mock")));
+		when(service.getGreeting(2L)).thenReturn(Optional.of(new GreetingsEntity(2L, "Hi, Mock")));
 		when(service.getGreeting(3L)).thenReturn(Optional.empty());
 
 		mockMvc.perform(putJson("/api/test/1", "Hello Mars!"))
@@ -88,14 +88,14 @@ public class HelloWorldMvcTest {
 		mockMvc.perform(putJson("/api/test/3", "Hello Unknown!"))
 			.andExpect(status().isNotFound());
 		
-		ArgumentCaptor<Greetings> argumentCaptor = ArgumentCaptor.forClass(Greetings.class);
+		ArgumentCaptor<GreetingsEntity> argumentCaptor = ArgumentCaptor.forClass(GreetingsEntity.class);
 		verify(service, times (3)).update(argumentCaptor.capture());
-		List<Greetings> captured = argumentCaptor.getAllValues();
+		List<GreetingsEntity> captured = argumentCaptor.getAllValues();
 
 		assertEquals(3, captured.size());
-		assertEquals(new Greetings(1L, "Hello Mars!"), captured.get(0));
-		assertEquals(new Greetings(2L, "Hi Mars!"), captured.get(1));
-		assertEquals(new Greetings(3L, "Hello Unknown!"), captured.get(2));
+		assertEquals(new GreetingsEntity(1L, "Hello Mars!"), captured.get(0));
+		assertEquals(new GreetingsEntity(2L, "Hi Mars!"), captured.get(1));
+		assertEquals(new GreetingsEntity(3L, "Hello Unknown!"), captured.get(2));
 	}
 
 	private MockHttpServletRequestBuilder putJson(String uri, String message) throws JSONException {
@@ -112,11 +112,11 @@ public class HelloWorldMvcTest {
 
 	private void mockServiceUpdate(final long id) {
 		when(service.update(argThat(generateGreetingsMatcherById(id))))
-		.thenAnswer( i -> Optional.of ((Greetings)(i.getArguments()[0])));
+		.thenAnswer( i -> Optional.of ((GreetingsEntity)(i.getArguments()[0])));
 	}
 
-	private ArgumentMatcher<Greetings> generateGreetingsMatcherById(final long id) {
-		final ArgumentMatcher<Greetings> matcher = g -> g != null && Long.valueOf(id).equals(g.getId());
+	private ArgumentMatcher<GreetingsEntity> generateGreetingsMatcherById(final long id) {
+		final ArgumentMatcher<GreetingsEntity> matcher = g -> g != null && Long.valueOf(id).equals(g.getId());
 		return matcher;
 	}
 
@@ -130,7 +130,7 @@ public class HelloWorldMvcTest {
 
 		when(service.save(any()))
 		.thenAnswer(i -> {
-			final Greetings greetings = (Greetings)(i.getArguments()[0]);
+			final GreetingsEntity greetings = (GreetingsEntity)(i.getArguments()[0]);
 
 			assertNull(greetings.getId());
 			
