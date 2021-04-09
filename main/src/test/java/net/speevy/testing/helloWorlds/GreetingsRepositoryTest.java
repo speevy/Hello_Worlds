@@ -7,7 +7,7 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 import java.util.*;
 import java.util.function.Consumer;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -32,7 +32,7 @@ public class GreetingsRepositoryTest {
 		assertTrue(result.stream().anyMatch(g -> "Hi World!".equals(g.getMessage())));
  	}
 
-	private void insertGreetings() {
+	private List<Greetings> insertGreetings() {
 		Greetings greetings1 = new Greetings(null, "Hello World!");
 		Greetings greetings2 = new Greetings(null, "Hi World!");
 		
@@ -44,6 +44,7 @@ public class GreetingsRepositoryTest {
 		assertThat(saved1.getId()).isNotNull();
 		assertThat(saved2.getId()).isNotNull();
 
+		return List.of(greetings1, greetings2);
 	}
 
 	@Test
@@ -100,23 +101,18 @@ public class GreetingsRepositoryTest {
 	
 	@Test
 	void testFindById() {
-		Greetings greetings1 = new Greetings(null, "Hello World!");
-		Greetings greetings2 = new Greetings(null, "Hi World!");
+		List<Greetings> inserted = insertGreetings();
+
+		inserted.forEach(greetings -> {
+			Optional<Greetings> result = repository.findById(greetings.getId());
+
+			assertTrue (result.isPresent());
+			assertEquals (greetings, result.get());
+		});
 		
-		repository.save(greetings1);
-		repository.save(greetings2);
+		long max = inserted.stream().map(Greetings::getId).reduce(Long.MIN_VALUE, Math::max);
 		
-		
-		Optional<Greetings> result1 = repository.findById(greetings1.getId());
-		Optional<Greetings> result2 = repository.findById(greetings2.getId());
-		Optional<Greetings> result3 = repository.findById(Math.max(greetings1.getId(), greetings2.getId()) + 1L);
-		
-		assertTrue (result1.isPresent());
-		assertTrue (result2.isPresent());
-		assertTrue (result3.isEmpty());
-		
-		assertEquals (greetings1, result1.get());
-		assertEquals (greetings2, result2.get());
+		assertTrue (repository.findById(max + 1).isEmpty());
  	}
 
 	@Test
@@ -132,5 +128,36 @@ public class GreetingsRepositoryTest {
 		assertEquals(1, results.size());
 		assertEquals (greetings1, results.get(0));
  	}
-	
+
+	Random rand = new Random();
+
+	@RepeatedTest(10)
+	void testDelete() {
+		testDelete(repository::delete);
+ 	}
+
+	@RepeatedTest(10)
+	void testDeleteById() {
+		testDelete(greetings -> repository.deleteById(greetings.getId()));
+ 	}
+
+	private void testDelete(Consumer<Greetings> deleteAction) {
+		List<Greetings> inserted = insertGreetings();
+		
+		Greetings toBeDeleted = inserted.get(rand.nextInt(inserted.size()));
+
+		deleteAction.accept(toBeDeleted);
+		
+		inserted.forEach(greetings -> {
+			Optional<Greetings> result = repository.findById(greetings.getId());
+
+			if (toBeDeleted.equals(greetings)) {
+				assertTrue (result.isEmpty());
+			} else {
+				assertTrue (result.isPresent());
+				assertEquals (greetings, result.get());
+			}
+		});
+ 	}
+
 }

@@ -31,4 +31,14 @@ public class GreetingsServiceImpl implements GreetingsService {
 		return repository.update(greetings);
 	}
 
+	@Override
+	public boolean delete(long id) {
+		if (!repository.existsById(id)) {
+			return false;
+		}
+		
+		repository.deleteById(id);
+		return true;
+	}
+
 }

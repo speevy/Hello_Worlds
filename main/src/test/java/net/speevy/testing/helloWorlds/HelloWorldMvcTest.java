@@ -147,4 +147,21 @@ public class HelloWorldMvcTest {
 		return sendJson(MockMvcRequestBuilders::post, uri, message);
 	}
 
+	@Test
+	public void greetingsDelete() throws Exception {
+
+		when(service.delete(1L))
+		.thenReturn(true);
+
+		when(service.delete(2L))
+		.thenReturn(false);
+
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/test/1"))
+		.andExpect(status().isOk());
+		
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/test/2"))
+		.andExpect(status().isNotFound());
+	}
+
+
 }

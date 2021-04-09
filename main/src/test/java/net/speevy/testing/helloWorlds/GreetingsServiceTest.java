@@ -98,4 +98,27 @@ public class GreetingsServiceTest {
 
 	}
 
+	@Test
+	public void testGreetingsServiceDeleteExisting() {
+		long id = 1L;
+		when(repository.existsById(id)).thenReturn(true);
+		
+		GreetingsService service = instanceService();
+
+		assertTrue(service.delete(id));
+		
+		verify(repository).deleteById(id);
+	}
+
+	@Test
+	public void testGreetingsServiceDeleteNotExisting() {
+		long id = 2L;
+		when(repository.existsById(id)).thenReturn(false);
+		
+		GreetingsService service = instanceService();
+
+		assertFalse(service.delete(id));
+		
+		verify(repository, times(0)).deleteById(any());
+	}
 }
