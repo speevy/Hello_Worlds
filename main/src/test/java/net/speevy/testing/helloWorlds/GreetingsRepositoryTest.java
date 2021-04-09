@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 import java.util.function.Consumer;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 
@@ -27,15 +27,19 @@ public class GreetingsRepositoryTest {
 		assertTrue(result.stream().anyMatch(g -> "Hi World!".equals(g.getMessage())));
  	}
 
-	private void insertGreetings() {
+	private List<Greetings> insertGreetings() {
 		Greetings greetings1 = new Greetings(null, "Hello World!");
 		Greetings greetings2 = new Greetings(null, "Hi World!");
 		
-		repository.save(greetings1);
-		repository.save(greetings2);
+		Greetings saved1 = repository.save(greetings1);
+		Greetings saved2 = repository.save(greetings2);
 		
 		assertThat(greetings1.getId()).isNotNull();
 		assertThat(greetings2.getId()).isNotNull();
+		assertThat(saved1.getId()).isNotNull();
+		assertThat(saved2.getId()).isNotNull();
+
+		return List.of(greetings1, greetings2);
 	}
 
 	@Test
@@ -92,23 +96,49 @@ public class GreetingsRepositoryTest {
 	
 	@Test
 	void testFindById() {
-		Greetings greetings1 = new Greetings(null, "Hello World!");
-		Greetings greetings2 = new Greetings(null, "Hi World!");
+		List<Greetings> inserted = insertGreetings();
+
+		inserted.forEach(greetings -> {
+			Optional<Greetings> result = repository.findById(greetings.getId());
+
+			assertTrue (result.isPresent());
+			assertEquals (greetings, result.get());
+		});
 		
-		repository.save(greetings1);
-		repository.save(greetings2);
+		long max = inserted.stream().map(Greetings::getId).reduce(Long.MIN_VALUE, Math::max);
 		
+		assertTrue (repository.findById(max + 1).isEmpty());
+ 	}
+
+	Random rand = new Random();
+
+	@RepeatedTest(10)
+	void testDelete() {
+		testDelete(repository::delete);
+ 	}
+
+	@RepeatedTest(10)
+	void testDeleteById() {
+		testDelete(greetings -> repository.deleteById(greetings.getId()));
+ 	}
+
+	private void testDelete(Consumer<Greetings> deleteAction) {
+		List<Greetings> inserted = insertGreetings();
 		
-		Optional<Greetings> result1 = repository.findById(greetings1.getId());
-		Optional<Greetings> result2 = repository.findById(greetings2.getId());
-		Optional<Greetings> result3 = repository.findById(Math.max(greetings1.getId(), greetings2.getId()) + 1L);
+		Greetings toBeDeleted = inserted.get(rand.nextInt(inserted.size()));
+
+		deleteAction.accept(toBeDeleted);
 		
-		assertTrue (result1.isPresent());
-		assertTrue (result2.isPresent());
-		assertTrue (result3.isEmpty());
-		
-		assertEquals (greetings1, result1.get());
-		assertEquals (greetings2, result2.get());
+		inserted.forEach(greetings -> {
+			Optional<Greetings> result = repository.findById(greetings.getId());
+
+			if (toBeDeleted.equals(greetings)) {
+				assertTrue (result.isEmpty());
+			} else {
+				assertTrue (result.isPresent());
+				assertEquals (greetings, result.get());
+			}
+		});
  	}
 
 }

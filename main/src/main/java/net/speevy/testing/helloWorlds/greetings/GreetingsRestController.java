@@ -56,4 +56,13 @@ public class GreetingsRestController {
 		return new ResponseEntity<>(mapper.toDto(saved), OK);
 	}
 
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		if (service.delete(id)) {
+			return new ResponseEntity<>(OK);
+		} else {
+			return new ResponseEntity<>(NOT_FOUND);
+		}
+	}
+
 }

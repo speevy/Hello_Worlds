@@ -12,4 +12,6 @@ public interface GreetingsService {
 
 	Optional<Greetings> update(Greetings greetings);
 
+	boolean delete(long id);
+
 }
