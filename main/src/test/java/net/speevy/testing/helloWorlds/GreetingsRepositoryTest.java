@@ -2,25 +2,37 @@ package net.speevy.testing.helloWorlds;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import net.speevy.testing.helloWorlds.greetings.*;
 
-@DataJdbcTest(includeFilters = {@Filter(type = ASSIGNABLE_TYPE, classes = {
-		GreetingsRepository.class, 
-		GreetingsSpringDataMapper.class
-	})})
-public class GreetingsRepositoryTest {
+@TestInstance(Lifecycle.PER_CLASS)
+public abstract class GreetingsRepositoryTest {
 
-	@Autowired GreetingsRepository repository;
+	private GreetingsRepository repository;
+	protected abstract GreetingsRepository buildRepository();
+	protected abstract void startTransaction();
+	protected abstract void rollbackTransaction();
+	
+	@BeforeAll
+	void init() {
+		repository = buildRepository();
+	}
+
+	@BeforeEach
+	void before() {
+		startTransaction();
+	}
+
+	@AfterEach
+	void after() {
+		rollbackTransaction();
+	}
 	
 	@Test
 	void testFindAll() {
