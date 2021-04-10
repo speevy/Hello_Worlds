@@ -2,11 +2,8 @@ package net.speevy.testing.helloWorlds.greetings;
 
 import java.util.*;
 
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 
-@Service
 @RequiredArgsConstructor
 public class GreetingsServiceImpl implements GreetingsService {
 	private final GreetingsRepository repository;

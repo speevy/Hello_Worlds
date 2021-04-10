@@ -7,15 +7,32 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import net.speevy.testing.helloWorlds.greetings.*;
 
-@DataJdbcTest
-public class GreetingsRepositoryTest {
+@TestInstance(Lifecycle.PER_CLASS)
+public abstract class GreetingsRepositoryTest {
 
-	@Autowired GreetingsRepository repository;
+	private GreetingsRepository repository;
+	protected abstract GreetingsRepository buildRepository();
+	protected abstract void startTransaction();
+	protected abstract void rollbackTransaction();
+	
+	@BeforeAll
+	void init() {
+		repository = buildRepository();
+	}
+
+	@BeforeEach
+	void before() {
+		startTransaction();
+	}
+
+	@AfterEach
+	void after() {
+		rollbackTransaction();
+	}
 	
 	@Test
 	void testFindAll() {
@@ -108,6 +125,20 @@ public class GreetingsRepositoryTest {
 		long max = inserted.stream().map(Greetings::getId).reduce(Long.MIN_VALUE, Math::max);
 		
 		assertTrue (repository.findById(max + 1).isEmpty());
+ 	}
+
+	@Test
+	void testFindByQuery() {
+		Greetings greetings1 = new Greetings(null, "Hello World!");
+		Greetings greetings2 = new Greetings(null, "Hi World!");
+		
+		repository.save(greetings1);
+		repository.save(greetings2);
+		
+		List<Greetings> results = repository.findByIdLessThan(greetings2.getId());
+		
+		assertEquals(1, results.size());
+		assertEquals (greetings1, results.get(0));
  	}
 
 	Random rand = new Random();

@@ -1,24 +1,14 @@
 package net.speevy.testing.helloWorlds.greetings;
 
-import java.util.*;
+import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import net.speevy.utils.IndependentCrudRepository;
 
-public interface GreetingsRepository extends CrudRepository<Greetings, Long> {
+public interface GreetingsRepository extends IndependentCrudRepository<Greetings, Long> {
 	
 	List<Greetings> findAll();
-	
-	default Optional<Greetings> update (Greetings g) {
-		assert(g != null);
-		final Long id = g.getId();
-		if (id == null) {
-			throw new IllegalArgumentException("Cannot update Greetings with null Id");
-		}
-		
-		if (!existsById(id)) {
-			return Optional.empty();
-		}
-		
-		return Optional.of(save(g));
-	}
+
+	List<Greetings> findByIdLessThan(Long maxId);
+
+
 }
