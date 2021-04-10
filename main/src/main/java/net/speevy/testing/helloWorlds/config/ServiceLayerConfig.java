@@ -2,11 +2,9 @@ package net.speevy.testing.helloWorlds.config;
 
 import org.springframework.context.annotation.*;
 
-import lombok.RequiredArgsConstructor;
 import net.speevy.testing.helloWorlds.greetings.*;
 
 @Configuration
-@RequiredArgsConstructor
 public class ServiceLayerConfig {
 
 	private final GreetingsRepository greetingsRepository;
