@@ -18,15 +18,8 @@ public class GreetingsServiceTest {
 	@Mock
 	private GreetingsRepository repository;
 
-	@BeforeEach
-	void setUp() {
-		MockitoAnnotations.openMocks(this);
-		System.out.println("GreetingsServiceTest::setUp");
-	}
-
 	@Test
 	public void testGreetingsServiceGet() {
-		System.out.println("GreetingsServiceTest::testGreetingsServiceGet");
 		when(repository.findById(1L)).thenReturn(Optional.of(new Greetings(1L, "Hello World")));
 
 		when(repository.findById(2L)).thenReturn(Optional.of(new Greetings(2L, "Hi World")));
