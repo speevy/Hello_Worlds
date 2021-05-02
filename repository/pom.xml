@@ -16,6 +16,7 @@
 	<modules>
 		<module>springDataRdbcRepositoryBase</module>
 		<module>springDataJdbcRepository</module>
+		<module>springDataJpaRepository</module>
 	</modules>
 	<build>
 		<plugins>

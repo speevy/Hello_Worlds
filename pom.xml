@@ -38,6 +38,7 @@
 		<module>rest</module>
 		<module>repository</module>
 		<module>main_jdbc</module>
+		<module>main_jpa</module>
 	</modules>
 	<build>
 		<plugins>
